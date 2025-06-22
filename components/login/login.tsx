@@ -95,31 +95,24 @@ export default function App() {
                 />
               </div>
 
-              {/* <div className="flex items-start">
-                <div className="flex items-center h-5">
-                  <input
-                    id="terms"
-                    aria-describedby="terms"
-                    type="checkbox"
-                    className="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-primary-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-primary-600 dark:ring-offset-gray-800"
-                    required
-                  />
-                </div>
-                <div className="ml-3 text-sm">
-                  <label
-                    htmlFor="terms"
-                    className="font-light text-gray-500 dark:text-gray-300"
-                  >
-                    Remember me
-                  </label>
-                </div>
-              </div> */}
               <button
                 type="submit"
                 className="w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
               >
                 Create an account
               </button>
+              <a
+                href="https://access.line.me/oauth2/v2.1/authorize?response_type=code&client_id=2007619582&redirect_uri=YOUR_CALLBACK_URL&state=xyz&scope=profile%20openid%20email"
+                className="flex items-center justify-center w-full text-white bg-green-600 hover:bg-green-700 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+              >
+                <img
+                  src="https://upload.wikimedia.org/wikipedia/commons/4/41/LINE_logo.svg"
+                  alt="LINE"
+                  className="w-5 h-5 mr-2"
+                />
+                Login with LINE
+              </a>
+
               <p className="text-sm font-light text-gray-500 dark:text-gray-400">
                 Doesn&apos;t have an account yet?{" "}
                 <a
