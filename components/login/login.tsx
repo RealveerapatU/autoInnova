@@ -1,6 +1,7 @@
 "use client";
 import axios from "axios";
-import React from "react";
+import React, { useEffect } from "react";
+import liff from "@line/liff";
 require("dotenv").config();
 
 async function signin(e: React.FormEvent<HTMLFormElement>) {
@@ -16,12 +17,8 @@ async function signin(e: React.FormEvent<HTMLFormElement>) {
     );
     if (response.status === 200) {
       const data = response.data;
-      const apiusernames = data.map((item: any) => {
-        return item.usernames;
-      });
-      const apipasswords = data.map((item: any) => {
-        return item.passwords;
-      });
+      const apiusernames = data.map((item: any) => item.usernames);
+      const apipasswords = data.map((item: any) => item.passwords);
       for (let i = 0; i < data.length; i++) {
         if (apiusernames[i] === username && inpassword === apipasswords[i]) {
           authen = true;
@@ -34,7 +31,6 @@ async function signin(e: React.FormEvent<HTMLFormElement>) {
       }
       alert("402 Access Denied");
     }
-
     return;
   } catch (error) {
     console.log(error);
@@ -42,6 +38,29 @@ async function signin(e: React.FormEvent<HTMLFormElement>) {
 }
 
 export default function App() {
+  const [username, setUsername] = React.useState<string | string>("");
+
+  useEffect(() => {
+    const init = async () => {
+      try {
+        await liff.init({ liffId: "2007619582-zZYjPXr7" });
+        if (!liff.isLoggedIn()) {
+          liff.login({
+            redirectUri: "https://7b7d-49-228-98-12.ngrok-free.app/signin",
+          });
+          return;
+        }
+        const profile = await liff.getProfile();
+        const userId = profile.userId;
+        localStorage.setItem("username", userId);
+        setUsername(userId);
+      } catch (err) {
+        console.error("LIFF Error:", err);
+      }
+    };
+    init();
+  }, []);
+
   return (
     <section className="bg-gray-50 dark:bg-gray-900">
       <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
@@ -94,35 +113,38 @@ export default function App() {
                   required
                 />
               </div>
-
               <button
                 type="submit"
                 className="w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
               >
                 Create an account
               </button>
-              <a
-                href="https://access.line.me/oauth2/v2.1/authorize?response_type=code&client_id=2007619582&redirect_uri=YOUR_CALLBACK_URL&state=xyz&scope=profile%20openid%20email"
-                className="flex items-center justify-center w-full text-white bg-green-600 hover:bg-green-700 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
-              >
-                <img
-                  src="https://upload.wikimedia.org/wikipedia/commons/4/41/LINE_logo.svg"
-                  alt="LINE"
-                  className="w-5 h-5 mr-2"
-                />
-                Login with LINE
-              </a>
-
-              <p className="text-sm font-light text-gray-500 dark:text-gray-400">
-                Doesn&apos;t have an account yet?{" "}
-                <a
-                  href="/signup"
-                  className="font-medium text-primary-600 hover:underline dark:text-primary-500"
-                >
-                  Sign up here
-                </a>
-              </p>
             </form>
+            <button
+              onClick={() =>
+                liff.login({
+                  redirectUri:
+                    "https://7b7d-49-228-98-12.ngrok-free.app/signin",
+                })
+              }
+              className="flex items-center justify-center w-full text-white bg-green-600 hover:bg-green-700 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+            >
+              <img
+                src="https://upload.wikimedia.org/wikipedia/commons/4/41/LINE_logo.svg"
+                alt="LINE"
+                className="w-5 h-5 mr-2"
+              />
+              Login with LINE
+            </button>
+            <p className="text-sm font-light text-gray-500 dark:text-gray-400">
+              Doesn&apos;t have an account yet?{" "}
+              <a
+                href="/signup"
+                className="font-medium text-primary-600 hover:underline dark:text-primary-500"
+              >
+                Sign up here
+              </a>
+            </p>
           </div>
         </div>
       </div>
