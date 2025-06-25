@@ -39,6 +39,8 @@ async function signin(e: React.FormEvent<HTMLFormElement>) {
 
 export default function App() {
   const [username, setUsername] = React.useState<string | string>("");
+  const [profile, setprofile] = React.useState<string | string>("");
+  const [displayname, setdisplayname] = React.useState<string | string>("");
 
   useEffect(() => {
     const init = async () => {
@@ -56,8 +58,15 @@ export default function App() {
         }
         const profile = await liff.getProfile();
         const userId = profile.userId;
-        localStorage.setItem("username", userId);
+        const userprofile = profile.pictureUrl;
+        const displayName = profile.displayName;
+
+        localStorage.setItem("petfeederusername", userId);
+        localStorage.setItem("petfeederuserprofile", userprofile!);
+        localStorage.setItem("petfeederdisplayname", displayName);
         setUsername(userId);
+        setprofile(userprofile!);
+        setdisplayname(displayName);
       } catch (err) {
         console.error("LIFF Error:", err);
       }
