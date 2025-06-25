@@ -50,7 +50,7 @@ export default function App() {
         await liff.init({ liffId });
         if (!liff.isLoggedIn()) {
           liff.login({
-            redirectUri: "https://autoinnova/signin",
+            redirectUri: "https://autoinnova.me/signin",
           });
           return;
         }
@@ -130,8 +130,7 @@ export default function App() {
             <button
               onClick={() =>
                 liff.login({
-                  redirectUri:
-                    "https://7b7d-49-228-98-12.ngrok-free.app/signin",
+                  redirectUri: "https://autoinnova.me/signin",
                 })
               }
               className="flex items-center justify-center w-full text-white bg-green-600 hover:bg-green-700 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
