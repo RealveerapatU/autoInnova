@@ -43,7 +43,11 @@ export default function App() {
   useEffect(() => {
     const init = async () => {
       try {
-        await liff.init({ liffId: "2007619582-zZYjPXr7" });
+        const liffId = process.env.NEXT_PUBLIC_liffId;
+        if (!liffId) {
+          throw new Error("NEXT_PUBLIC_liffId environment variable is not set");
+        }
+        await liff.init({ liffId });
         if (!liff.isLoggedIn()) {
           liff.login({
             redirectUri: "https://7b7d-49-228-98-12.ngrok-free.app/signin",
