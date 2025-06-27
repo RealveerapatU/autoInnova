@@ -3,32 +3,34 @@ import {
   CloudArrowUpIcon,
   FingerPrintIcon,
   LockClosedIcon,
+  GlobeAltIcon,
 } from "@heroicons/react/24/outline";
-
+import { CiCloudOn } from "react-icons/ci";
+import { FaServer } from "react-icons/fa";
 const features = [
   {
-    name: "Push to deploy",
+    name: "High Perfotmance Server",
     description:
-      "Morbi viverra dui mi arcu sed. Tellus semper adipiscing suspendisse semper morbi. Odio urna massa nunc massa.",
-    icon: CloudArrowUpIcon,
+      "Provide data process for an IOT devices faster and increase accuracy.",
+    icon: FaServer,
   },
   {
-    name: "SSL certificates",
+    name: "Cloud Infrasturcture",
     description:
-      "Sit quis amet rutrum tellus ullamcorper ultricies libero dolor eget. Sem sodales gravida quam turpis enim lacus amet.",
+      "No worry of data losts Cloud Infrasturcture provide backup and fast recovery within seconds",
+    icon: CiCloudOn,
+  },
+  {
+    name: "Fast and secure connection",
+    description:
+      "Fast internet connection server provide data process faster and increase efficency  provide better user experiences.",
+    icon: GlobeAltIcon,
+  },
+  {
+    name: "Privacy",
+    description:
+      "We are not required your personal information and  required only just line application inorder to signin . ",
     icon: LockClosedIcon,
-  },
-  {
-    name: "Simple queues",
-    description:
-      "Quisque est vel vulputate cursus. Risus proin diam nunc commodo. Lobortis auctor congue commodo diam neque.",
-    icon: ArrowPathIcon,
-  },
-  {
-    name: "Advanced security",
-    description:
-      "Arcu egestas dolor vel iaculis in ipsum mauris. Tincidunt mattis aliquet hac quis. Id hac maecenas ac donec pharetra eget.",
-    icon: FingerPrintIcon,
   },
 ];
 
@@ -37,16 +39,14 @@ export default function App() {
     <div className="bg-white py-24 sm:py-32">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <div className="mx-auto max-w-2xl lg:text-center">
-          <h2 className="text-base/7 font-semibold text-indigo-600">
+          {/* <h2 className="text-base/7 font-semibold text-indigo-600">
             Deploy faster
-          </h2>
+          </h2> */}
           <p className="mt-2 text-4xl font-semibold tracking-tight text-pretty text-gray-900 sm:text-5xl lg:text-balance">
-            Everything you need to deploy your app
+            Manage IOT devices from your phone
           </p>
           <p className="mt-6 text-lg/8 text-gray-600">
-            Quis tellus eget adipiscing convallis sit sit eget aliquet quis.
-            Suspendisse eget egestas a elementum pulvinar et feugiat blandit at.
-            In mi viverra elit nunc.
+           Autoinnova provide an interface make you able to control every IOT devices from everywhere just required only internet.
           </p>
         </div>
         <div className="mx-auto mt-16 max-w-2xl sm:mt-20 lg:mt-24 lg:max-w-4xl">

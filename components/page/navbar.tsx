@@ -16,6 +16,7 @@ import {
   NavbarMenuItem,
 } from "@heroui/react";
 import React, { useEffect } from "react";
+import { useRouter } from "next/navigation";
 
 export const AcmeLogo = () => {
   return (
@@ -75,16 +76,21 @@ export const SearchIcon = ({
 };
 
 export default function App() {
+  const router = useRouter();
+
   const [username, setusername] = React.useState<string | string>("");
+  const [userprofile, setuserprofile] = React.useState<string | string>("");
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
   useEffect(() => {
-    const getusername = localStorage.getItem("petfeederusername");
+    const getusername = localStorage.getItem("petfeederdisplayname");
+    const getprofile = localStorage.getItem("petfeederuserprofile");
     if (getusername === null || getusername === undefined) {
       setusername("undefined");
 
       return;
     }
-    setusername(username!);
+    setusername(getusername);
+    setuserprofile(getprofile || "");
   }, [username]);
 
   const menuItems = [
@@ -117,12 +123,12 @@ export default function App() {
         <NavbarContent className="hidden sm:flex flex-1 justify-center gap-3">
           <NavbarItem>
             <Link color="foreground" href="#features">
-              Features
+              Dashboard
             </Link>
           </NavbarItem>
           <NavbarItem isActive>
             <Link aria-current="page" color="secondary" href="#">
-              Customers
+              Shop
             </Link>
           </NavbarItem>
           <NavbarItem>
@@ -171,39 +177,44 @@ export default function App() {
                 color="secondary"
                 name="Jason Hughes"
                 size="sm"
-                src="https://i.pravatar.cc/150?u=a042581f4e29026704d"
+                src={userprofile}
               />
             </DropdownTrigger>
           )}
 
           <DropdownMenu aria-label="Profile Actions" variant="flat">
-            <DropdownItem key="profile" className="h-14 gap-2">
-              {username == "undefined" ? (
-                <>
-                  <a href="/signin">
-                    <p className="font-semibold">Sign in</p>
-                  </a>
-                </>
-              ) : (
-                <>
-                  <p className="font-semibold">Signed in as</p>
-                  <p className="font-semibold">{username}</p>
-                  <DropdownItem key="settings">My Settings</DropdownItem>
-                  <DropdownItem key="team_settings">Team Settings</DropdownItem>
-                  <DropdownItem key="analytics">Analytics</DropdownItem>
-                  <DropdownItem key="system">System</DropdownItem>
-                  <DropdownItem key="configurations">
-                    Configurations
-                  </DropdownItem>
-                  <DropdownItem key="help_and_feedback">
-                    Help & Feedback
-                  </DropdownItem>
-                  <DropdownItem key="logout" color="danger">
-                    Log Out
-                  </DropdownItem>
-                </>
-              )}
-            </DropdownItem>
+            {username === "undefined" ? (
+              <DropdownItem key="signin" className="h-14 gap-2">
+                <a href="/signin">
+                  <p className="font-semibold">Sign in</p>
+                </a>
+              </DropdownItem>
+            ) : (
+              <>
+                <DropdownItem key="profile" className="h-14 gap-2">
+                  <p className="font-semibold">Signed in as {username}</p>
+                </DropdownItem>
+
+                <DropdownItem
+                  key="settings"
+                  onClick={() => {
+                    router.push("/dashboard");
+                  }}
+                >
+                  Dashboard
+                </DropdownItem>
+                {/* <DropdownItem key="team_settings">Team Settings</DropdownItem>
+                <DropdownItem key="analytics">Analytics</DropdownItem>
+                <DropdownItem key="system">System</DropdownItem>
+                <DropdownItem key="configurations">Configurations</DropdownItem>
+                <DropdownItem key="help_and_feedback">
+                  Help & Feedback
+                </DropdownItem> */}
+                <DropdownItem key="logout" color="danger">
+                  Log Out
+                </DropdownItem>
+              </>
+            )}
           </DropdownMenu>
         </Dropdown>
       </NavbarContent>

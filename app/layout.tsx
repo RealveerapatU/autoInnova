@@ -33,11 +33,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang="en" data-theme="light">
       <body>
-        <Navbar />
-        <Providers>{children}</Providers>
-        <Footer />
+      <Navbar />
+      <Providers>{children}</Providers>
+      <Footer />
       </body>
     </html>
   );
