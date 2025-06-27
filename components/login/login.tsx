@@ -54,7 +54,7 @@ export default function App() {
           liff.login({
             redirectUri: "https://autoinnova.me/signin",
           });
-          
+          alert("OK");
           return;
         }
         const profile = await liff.getProfile();
