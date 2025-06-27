@@ -46,7 +46,8 @@ export default function App() {
             Manage IOT devices from your phone
           </p>
           <p className="mt-6 text-lg/8 text-gray-600">
-           Autoinnova provide an interface make you able to control every IOT devices from everywhere just required only internet.
+            Autoinnova provide an interface make you able to control every IOT
+            devices from everywhere just required only internet.
           </p>
         </div>
         <div className="mx-auto mt-16 max-w-2xl sm:mt-20 lg:mt-24 lg:max-w-4xl">
