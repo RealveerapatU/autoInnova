@@ -122,17 +122,17 @@ export default function App() {
         </NavbarBrand>
         <NavbarContent className="hidden sm:flex flex-1 justify-center gap-3">
           <NavbarItem>
-            <Link color="foreground" href="#features">
+            <Link color="foreground" href="/dashboard">
               Dashboard
             </Link>
           </NavbarItem>
           <NavbarItem isActive>
-            <Link aria-current="page" color="secondary" href="#">
+            <Link color="foreground" href="/">
               Shop
             </Link>
           </NavbarItem>
           <NavbarItem>
-            <Link color="foreground" href="#">
+            <Link color="foreground" href="/">
               Integrations
             </Link>
           </NavbarItem>
