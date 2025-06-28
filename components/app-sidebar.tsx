@@ -31,37 +31,37 @@ const items = [
   },
   {
     title: "Projects",
-    url: "#",
+    url: "/",
     icon: FolderOpen,
   },
   {
     title: "Analytics",
-    url: "#",
+    url: "/",
     icon: BarChart3,
   },
   {
     title: "Team",
-    url: "#",
+    url: "/",
     icon: Users,
   },
   {
     title: "Calendar",
-    url: "#",
+    url: "/",
     icon: Calendar,
   },
   {
     title: "Search",
-    url: "#",
+    url: "/",
     icon: Search,
   },
   {
     title: "Notifications",
-    url: "#",
+    url: "/",
     icon: Bell,
   },
   {
     title: "Settings",
-    url: "#",
+    url: "/",
     icon: Settings,
   },
 ];

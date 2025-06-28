@@ -1,12 +1,23 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { Button } from "@/components/ui/button"
-import { Clock, Activity } from "lucide-react"
+import { useState } from "react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Clock, Activity } from "lucide-react";
 
 const recentActivity = [
   {
@@ -17,7 +28,8 @@ const recentActivity = [
     status: "completed",
     time: "2 minutes ago",
     avatar: "/placeholder.svg?height=32&width=32",
-    details: "Created a new React project with TypeScript configuration and set up the initial file structure.",
+    details:
+      "Created a new React project with TypeScript configuration and set up the initial file structure.",
     device: "MacBook Pro",
     location: "San Francisco, CA",
   },
@@ -29,7 +41,8 @@ const recentActivity = [
     status: "completed",
     time: "5 minutes ago",
     avatar: "/placeholder.svg?height=32&width=32",
-    details: "Updated profile picture and contact information in the user settings panel.",
+    details:
+      "Updated profile picture and contact information in the user settings panel.",
     device: "iPhone 15 Pro",
     location: "New York, NY",
   },
@@ -41,7 +54,8 @@ const recentActivity = [
     status: "in-progress",
     time: "10 minutes ago",
     avatar: "/placeholder.svg?height=32&width=32",
-    details: "Initiated deployment pipeline for version 2.1.0 to production environment.",
+    details:
+      "Initiated deployment pipeline for version 2.1.0 to production environment.",
     device: "Windows Surface",
     location: "Austin, TX",
   },
@@ -53,7 +67,8 @@ const recentActivity = [
     status: "completed",
     time: "15 minutes ago",
     avatar: "/placeholder.svg?height=32&width=32",
-    details: "Sent invitation to alex@company.com to join the development team with admin privileges.",
+    details:
+      "Sent invitation to alex@company.com to join the development team with admin privileges.",
     device: "iPad Air",
     location: "Seattle, WA",
   },
@@ -65,21 +80,26 @@ const recentActivity = [
     status: "pending",
     time: "20 minutes ago",
     avatar: "/placeholder.svg?height=32&width=32",
-    details: "Added new API documentation for the authentication endpoints and updated examples.",
+    details:
+      "Added new API documentation for the authentication endpoints and updated examples.",
     device: "MacBook Air",
     location: "Los Angeles, CA",
   },
-]
+];
 
 export function RecentActivity() {
-  const [selectedActivity, setSelectedActivity] = useState<(typeof recentActivity)[0] | null>(null)
+  const [selectedActivity, setSelectedActivity] = useState<
+    (typeof recentActivity)[0] | null
+  >(null);
 
   return (
     <>
       <Card>
         <CardHeader>
-          <CardTitle>Recent Activity</CardTitle>
-          <CardDescription>Latest actions from your team members</CardDescription>
+          <CardTitle>Device Management</CardTitle>
+          <CardDescription>
+            all of your devices will be shown here
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="grid gap-4">
@@ -92,15 +112,17 @@ export function RecentActivity() {
                 <CardContent className="p-4">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                      <Avatar className="h-10 w-10">
-                        <AvatarImage src={activity.avatar || "/placeholder.svg"} />
+                      {/* <Avatar className="h-10 w-10">
+                        <AvatarImage
+                          src={activity.avatar || "/placeholder.svg"}
+                        />
                         <AvatarFallback>
                           {activity.user
                             .split(" ")
                             .map((n) => n[0])
                             .join("")}
                         </AvatarFallback>
-                      </Avatar>
+                      </Avatar> */}
                       <div className="flex-1">
                         <div className="flex items-center gap-2">
                           <span className="font-medium">{activity.user}</span>
@@ -117,14 +139,18 @@ export function RecentActivity() {
                             {activity.status}
                           </Badge>
                         </div>
-                        <p className="text-sm text-muted-foreground">{activity.action}</p>
-                        <div className="flex items-center gap-4 mt-1">
+                        <p className="text-sm text-muted-foreground">
+                          {activity.action}
+                        </p>
+                        {/* <div className="flex items-center gap-4 mt-1">
                           <span className="text-xs text-muted-foreground flex items-center gap-1">
                             <Clock className="h-3 w-3" />
                             {activity.time}
                           </span>
-                          <span className="text-xs text-muted-foreground">{activity.email}</span>
-                        </div>
+                          <span className="text-xs text-muted-foreground">
+                            {activity.email}
+                          </span>
+                        </div> */}
                       </div>
                     </div>
                     <div className="text-right">
@@ -138,12 +164,17 @@ export function RecentActivity() {
         </CardContent>
       </Card>
 
-      <Dialog open={!!selectedActivity} onOpenChange={() => setSelectedActivity(null)}>
+      <Dialog
+        open={!!selectedActivity}
+        onOpenChange={() => setSelectedActivity(null)}
+      >
         <DialogContent className="max-w-2xl">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-3">
               <Avatar className="h-12 w-12">
-                <AvatarImage src={selectedActivity?.avatar || "/placeholder.svg"} />
+                <AvatarImage
+                  src={selectedActivity?.avatar || "/placeholder.svg"}
+                />
                 <AvatarFallback>
                   {selectedActivity?.user
                     .split(" ")
@@ -152,8 +183,12 @@ export function RecentActivity() {
                 </AvatarFallback>
               </Avatar>
               <div>
-                <h3 className="text-lg font-semibold">{selectedActivity?.user}</h3>
-                <p className="text-sm text-muted-foreground">{selectedActivity?.email}</p>
+                <h3 className="text-lg font-semibold">
+                  {selectedActivity?.user}
+                </h3>
+                <p className="text-sm text-muted-foreground">
+                  {selectedActivity?.email}
+                </p>
               </div>
             </DialogTitle>
           </DialogHeader>
@@ -186,7 +221,9 @@ export function RecentActivity() {
 
               <div className="space-y-2">
                 <h4 className="font-medium">Details</h4>
-                <p className="text-sm text-muted-foreground">{selectedActivity.details}</p>
+                <p className="text-sm text-muted-foreground">
+                  {selectedActivity.details}
+                </p>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
@@ -209,7 +246,10 @@ export function RecentActivity() {
               </div>
 
               <div className="flex justify-end">
-                <Button variant="outline" onClick={() => setSelectedActivity(null)}>
+                <Button
+                  variant="outline"
+                  onClick={() => setSelectedActivity(null)}
+                >
                   Close
                 </Button>
               </div>
@@ -218,5 +258,5 @@ export function RecentActivity() {
         </DialogContent>
       </Dialog>
     </>
-  )
+  );
 }
