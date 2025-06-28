@@ -102,6 +102,7 @@ export default function App() {
         setUsername(userId);
         setprofile(userprofile!);
         setdisplayname(displayName);
+        window.location.href = `/`;
       } catch (err) {
         console.error("LIFF Error:", err);
       }
