@@ -35,9 +35,9 @@ export default function RootLayout({
   return (
     <html lang="en" data-theme="light">
       <body>
-      <Navbar />
-      <Providers>{children}</Providers>
-      <Footer />
+        <Navbar />
+        <Providers>{children}</Providers>
+        <Footer />
       </body>
     </html>
   );

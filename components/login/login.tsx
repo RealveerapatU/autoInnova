@@ -36,7 +36,39 @@ async function signin(e: React.FormEvent<HTMLFormElement>) {
     console.log(error);
   }
 }
-
+async function Registeruid(userid: any) {
+  let repeat = false;
+  const responserepeat = await axios.get(
+    `${process.env.NEXT_PUBLIC_URL}/autoinnova/user`
+  );
+  if (responserepeat.status == 200) {
+    const data = responserepeat.data;
+    const alluser = data.map((item: any) => {
+      return item.line_uid;
+    });
+    for (let i = 0; i < alluser.length; i++) {
+      if (alluser[i] === userid) {
+        repeat = true;
+        break;
+      }
+    }
+    if (repeat) {
+      return;
+    }
+    const response = await axios.post(
+      `${process.env.NEXT_PUBLIC_URL}/autoinnova/registra`,
+      {
+        uid: userid,
+      }
+    );
+    if (response.status === 200) {
+      alert("Registered Successful");
+      return;
+    }
+    alert("500 Internal Server Error. Try again");
+    return;
+  }
+}
 export default function App() {
   const [username, setUsername] = React.useState<string | string>("");
   const [profile, setprofile] = React.useState<string | string>("");
@@ -52,16 +84,17 @@ export default function App() {
         await liff.init({ liffId });
         if (!liff.isLoggedIn()) {
           liff.login({
-            redirectUri: "https://autoinnova.me/signin",
+            redirectUri: `${process.env.NEXT_PUBLIC_redirectURL}/signin`,
           });
-          
+
           return;
         }
-        alert("OK");
+
         const profile = await liff.getProfile();
         const userId = profile.userId;
         const userprofile = profile.pictureUrl;
         const displayName = profile.displayName;
+        Registeruid(userId);
 
         localStorage.setItem("petfeederusername", userId);
         localStorage.setItem("petfeederuserprofile", userprofile!);
@@ -141,7 +174,7 @@ export default function App() {
             <button
               onClick={() =>
                 liff.login({
-                  redirectUri: "https://autoinnova.me/signin",
+                  redirectUri: `${process.env.NEXT_PUBLIC_redirectURL}/signin`,
                 })
               }
               className="flex items-center justify-center w-full text-white bg-green-600 hover:bg-green-700 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
