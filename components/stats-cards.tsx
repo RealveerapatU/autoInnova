@@ -2,47 +2,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { TrendingUp, Users, DollarSign, Activity } from "lucide-react";
 import axios from "axios";
 import { useEffect, useState } from "react";
-let devices_id = [];
-let types = [];
-let fault = 0;
-async function getDeviceid() {
-  let active = 0;
-  const uid = localStorage.getItem("petfeederusername");
-  try {
-    const response = await axios.post(
-      `${process.env.NEXT_PUBLIC_URL}/autoinnova/devices/`,
-      {
-        uid: uid,
-      }
-    );
-    if (response.status === 200) {
-      const data = response.data;
-      devices_id = data.map((item: any) => {
-        return item.devices_id;
-      });
-      types = data.map((item: any) => {
-        return item.types;
-      });
-
-      for (let i = 0; i < devices_id.length; i++) {
-        const pingresponse = await axios.get(
-          `${process.env.NEXT_PUBLIC_PING_URL}${devices_id[i]}`
-        );
-
-        const pingdata = pingresponse.data;
-        const devicestatus = pingdata.online;
-
-        if (devicestatus === true) {
-          active++;
-        }
-      }
-      // console.log(active);
-      return data.length + " " + active + " " + (data.length - active);
-    }
-  } catch (error) {
-    console.log(error);
-  }
-}
 
 const stats = [
   {
@@ -77,15 +36,45 @@ const stats = [
 
 export function StatsCards() {
   const [alldevices, setalldevices] = useState<string[]>([]);
-  useEffect(() => {
-    setInterval(async () => {
-      const total = await getDeviceid();
-      const data = total?.trim().split(" ");
-      // console.log(data);
 
-      setalldevices(data!);
-    }, 1000);
+  useEffect(() => {
+    async function fetchDeviceData() {
+      const uid = localStorage.getItem("petfeederusername");
+      let active = 0;
+
+      try {
+        const response = await axios.post(
+          `${process.env.NEXT_PUBLIC_URL}/autoinnova/devices/`,
+          { uid }
+        );
+
+        if (response.status === 200) {
+          const data = response.data;
+          const devices_id = data.map((item: any) => item.devices_id);
+
+          for (let i = 0; i < devices_id.length; i++) {
+            const pingresponse = await axios.get(
+              `${process.env.NEXT_PUBLIC_PING_URL}${devices_id[i]}`
+            );
+            if (pingresponse.data?.online) {
+              active++;
+            }
+          }
+
+          const total = data.length;
+          const inactive = total - active;
+          setalldevices([String(total), String(active), String(inactive)]);
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    }
+
+    const interval = setInterval(fetchDeviceData, 1000);
+
+    return () => clearInterval(interval); // cleanup
   }, []);
+
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
       <Card>
@@ -94,7 +83,6 @@ export function StatsCards() {
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold">{alldevices[0] ?? ""}</div>
-          <p className="text-xs text-muted-foreground"></p>
         </CardContent>
       </Card>
       <Card>
@@ -103,7 +91,6 @@ export function StatsCards() {
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold">{alldevices[1] ?? ""}</div>
-          <p className="text-xs text-muted-foreground"></p>
         </CardContent>
       </Card>
       <Card>
@@ -114,7 +101,6 @@ export function StatsCards() {
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold">{alldevices[2] ?? ""}</div>
-          <p className="text-xs text-muted-foreground"></p>
         </CardContent>
       </Card>
     </div>
