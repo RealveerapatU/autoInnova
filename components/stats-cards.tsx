@@ -72,7 +72,7 @@ export function StatsCards() {
 
     const interval = setInterval(fetchDeviceData, 1000);
 
-    return () => clearInterval(interval); // cleanup
+    return () => clearInterval(interval); 
   }, []);
 
   return (
