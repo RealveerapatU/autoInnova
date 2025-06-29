@@ -37,36 +37,39 @@ async function signin(e: React.FormEvent<HTMLFormElement>) {
   }
 }
 async function Registeruid(userid: any) {
-  let repeat = false;
-  const responserepeat = await axios.get(
-    `${process.env.NEXT_PUBLIC_URL}/autoinnova/user`
-  );
-  if (responserepeat.status == 200) {
-    const data = responserepeat.data;
-    const alluser = data.map((item: any) => {
-      return item.line_uid;
-    });
-    for (let i = 0; i < alluser.length; i++) {
-      if (alluser[i] === userid) {
-        repeat = true;
-        break;
-      }
-    }
-    if (repeat) {
-      return;
-    }
-    const response = await axios.post(
-      `${process.env.NEXT_PUBLIC_URL}/autoinnova/registra`,
-      {
-        uid: userid,
-      }
+  try {
+    let repeat = false;
+    const responserepeat = await axios.get(
+      `${process.env.NEXT_PUBLIC_URL}/autoinnova/user`
     );
-    if (response.status === 200) {
-      alert("Registered Successful");
+    if (responserepeat.status == 200) {
+      const data = responserepeat.data;
+      const alluser = data.map((item: any) => {
+        return item.line_uid;
+      });
+      for (let i = 0; i < alluser.length; i++) {
+        if (alluser[i] === userid) {
+          repeat = true;
+          break;
+        }
+      }
+      if (repeat) {
+        return;
+      }
+      const response = await axios.post(
+        `${process.env.NEXT_PUBLIC_URL}/autoinnova/registra`,
+        {
+          uid: userid,
+        }
+      );
+      if (response.status === 200) {
+        alert("Registered Successful");
+        return;
+      }
       return;
     }
-    alert("500 Internal Server Error. Try again");
-    return;
+  } catch (error) {
+    console.log(error);
   }
 }
 export default function App() {
@@ -94,7 +97,6 @@ export default function App() {
         const userId = profile.userId;
         const userprofile = profile.pictureUrl;
         const displayName = profile.displayName;
-        Registeruid(userId);
 
         localStorage.setItem("petfeederusername", userId);
         localStorage.setItem("petfeederuserprofile", userprofile!);
@@ -102,7 +104,8 @@ export default function App() {
         setUsername(userId);
         setprofile(userprofile!);
         setdisplayname(displayName);
-        window.location.href = `/`;
+        await Registeruid(userId);
+        window.location.href = "/dashboard";
       } catch (err) {
         console.error("LIFF Error:", err);
       }
