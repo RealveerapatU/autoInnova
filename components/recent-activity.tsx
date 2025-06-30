@@ -91,6 +91,8 @@ const recentActivity = [
 ];
 
 export function RecentActivity() {
+  const [username, setUsername] = React.useState<string | string>("");
+
   let jsonformat = [];
   const [selectedActivity, setSelectedActivity] = useState<
     (typeof recentActivity)[0] | null
@@ -105,10 +107,29 @@ export function RecentActivity() {
   const [amount, setAmount] = React.useState<number | undefined>(undefined);
   const errors: string[] = [];
 
-  const onSubmit = (e: any) => {
+  const onSubmit = async (e: any) => {
     e.preventDefault();
     const data = Object.fromEntries(new FormData(e.currentTarget));
+    const device = selectedActivity?.id;
+    const value = data.amount;
+    const type = selectedActivity?.device;
 
+    const response = await axios.post(`${process.env.NEXT_PUBLIC_Rotate}`, {
+      device_id: device,
+      action: `rotate${value}`,
+    });
+    if (response.status === 200) {
+      alert("Success");
+      const historyresponse = await axios.post(
+        `${process.env.NEXT_PUBLIC_URL}/autoinnova/Transanction`,
+        {
+          device: device,
+          type: type,
+          amount: value,
+          lineuid: username,
+        }
+      );
+    }
     setSubmitted(data);
   };
 
@@ -116,17 +137,18 @@ export function RecentActivity() {
     errors.push("The value must not be empty");
   }
 
-  if (amount! < 100) {
-    errors.push("The value must be greater than 100");
+  if (amount! < 0) {
+    errors.push("The value must be greater than 0");
   }
 
-  if (amount! > 1000) {
-    errors.push("The value must be less than 1000");
+  if (amount! > 10) {
+    errors.push("The value must be less than 10");
   }
 
   useEffect(() => {
     async function fetchDeviceData() {
       const uid = localStorage.getItem("petfeederusername");
+      setUsername(uid!);
       let active = 0;
 
       try {
@@ -161,7 +183,7 @@ export function RecentActivity() {
             };
           });
           setdatajson(jsonformat);
-          console.log(jsonformat);
+          // s
         }
       } catch (error) {
         console.error(error);
@@ -349,8 +371,13 @@ export function RecentActivity() {
                       </Button>
                       {submitted && (
                         <div className="text-small text-default-500 mt-2">
-                          You submitted:{" "}
-                          <code>{JSON.stringify(submitted)}</code>
+                          {/* You submitted:{" "} */}
+                          {/* <code>
+                            {JSON.stringify({
+                              devid: selectedActivity.id,
+                              amount: submitted?.amount,
+                            })}
+                          </code> */}
                         </div>
                       )}
                     </Form>
