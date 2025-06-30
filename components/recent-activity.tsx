@@ -1,6 +1,6 @@
 "use client";
-
-import { useState } from "react";
+import { Button, Form, NumberInput } from "@heroui/react";
+import { useEffect, useState } from "react";
 import {
   Card,
   CardContent,
@@ -16,8 +16,11 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
+
 import { Clock, Activity } from "lucide-react";
+import axios from "axios";
+import { stat } from "fs";
+import React from "react";
 
 const recentActivity = [
   {
@@ -88,10 +91,87 @@ const recentActivity = [
 ];
 
 export function RecentActivity() {
+  let jsonformat = [];
   const [selectedActivity, setSelectedActivity] = useState<
     (typeof recentActivity)[0] | null
   >(null);
+  const [alldata, setdata] = useState<any[]>([]);
+  const [alldatajson, setdatajson] = useState<
+    { deviceid: string; type: string; uid: string; status: string }[]
+  >([]);
+  const [submitted, setSubmitted] = React.useState<{
+    [k: string]: FormDataEntryValue;
+  } | null>(null);
+  const [amount, setAmount] = React.useState<number | undefined>(undefined);
+  const errors: string[] = [];
 
+  const onSubmit = (e: any) => {
+    e.preventDefault();
+    const data = Object.fromEntries(new FormData(e.currentTarget));
+
+    setSubmitted(data);
+  };
+
+  if (!amount) {
+    errors.push("The value must not be empty");
+  }
+
+  if (amount! < 100) {
+    errors.push("The value must be greater than 100");
+  }
+
+  if (amount! > 1000) {
+    errors.push("The value must be less than 1000");
+  }
+
+  useEffect(() => {
+    async function fetchDeviceData() {
+      const uid = localStorage.getItem("petfeederusername");
+      let active = 0;
+
+      try {
+        const response = await axios.post(
+          `${process.env.NEXT_PUBLIC_URL}/autoinnova/devices/`,
+          { uid }
+        );
+        let status = [];
+        if (response.status === 200) {
+          const datas = response.data;
+          const deviceid = datas.map((item: any) => item.devices_id);
+          for (let i = 0; i < deviceid.length; i++) {
+            const responseping = await axios.get(
+              `${process.env.NEXT_PUBLIC_PING_URL}${deviceid[i]}`
+            );
+
+            if (responseping.data.online) {
+              status[i] = "active";
+            } else {
+              status[i] = "Inactive";
+            }
+            // console.log(status[i])
+          }
+
+          setdata(datas);
+          jsonformat = datas.map((item: any, i: number) => {
+            return {
+              deviceid: item.devices_id,
+              type: item.types,
+              uid: item.line_uid,
+              status: status[i],
+            };
+          });
+          setdatajson(jsonformat);
+          console.log(jsonformat);
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    }
+
+    const interval = setInterval(fetchDeviceData, 1000);
+
+    return () => clearInterval(interval);
+  }, []);
   return (
     <>
       <Card>
@@ -103,29 +183,33 @@ export function RecentActivity() {
         </CardHeader>
         <CardContent>
           <div className="grid gap-4">
-            {recentActivity.map((activity) => (
+            {alldatajson.map((activity) => (
               <Card
-                key={activity.id}
+                key={activity.deviceid}
                 className="cursor-pointer transition-all duration-200 hover:shadow-md hover:scale-[1.02] border-l-4 border-l-blue-500"
-                onClick={() => setSelectedActivity(activity)}
+                onClick={() =>
+                  setSelectedActivity({
+                    id: activity.deviceid,
+                    user: activity.deviceid,
+                    email: "",
+                    action: "",
+                    status: activity.status,
+                    time: "",
+                    avatar: "",
+                    details: "",
+                    device: activity.type,
+                    location: "",
+                  })
+                }
               >
                 <CardContent className="p-4">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                      {/* <Avatar className="h-10 w-10">
-                        <AvatarImage
-                          src={activity.avatar || "/placeholder.svg"}
-                        />
-                        <AvatarFallback>
-                          {activity.user
-                            .split(" ")
-                            .map((n) => n[0])
-                            .join("")}
-                        </AvatarFallback>
-                      </Avatar> */}
                       <div className="flex-1">
                         <div className="flex items-center gap-2">
-                          <span className="font-medium">{activity.user}</span>
+                          <span className="font-medium">
+                            {activity.deviceid}
+                          </span>
                           <Badge
                             variant={
                               activity.status === "completed"
@@ -140,7 +224,7 @@ export function RecentActivity() {
                           </Badge>
                         </div>
                         <p className="text-sm text-muted-foreground">
-                          {activity.action}
+                          {activity.type}
                         </p>
                         {/* <div className="flex items-center gap-4 mt-1">
                           <span className="text-xs text-muted-foreground flex items-center gap-1">
@@ -198,8 +282,21 @@ export function RecentActivity() {
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <h4 className="font-medium flex items-center gap-2">
-                    <Activity className="h-4 w-4" />
+                    {/* <Activity className="h-4 w-4" />
                     Action
+                    <br />
+                    <NumberInput
+                      className="max-w-3xs"
+                      placeholder="Enter the amount"
+                    /> */}
+                    <div className="space-y-2">
+                      <div className="space-y-2">
+                        <h4 className="font-medium">Device</h4>
+                        <p className="text-sm">{selectedActivity.device}</p>
+                        {/* <h4 className="font-medium">Device</h4>
+                  <p className="text-sm">{selectedActivity.device}</p> */}
+                      </div>
+                    </div>
                   </h4>
                   <p className="text-sm">{selectedActivity.action}</p>
                 </div>
@@ -220,34 +317,73 @@ export function RecentActivity() {
               </div>
 
               <div className="space-y-2">
-                <h4 className="font-medium">Details</h4>
-                <p className="text-sm text-muted-foreground">
-                  {selectedActivity.details}
-                </p>
+                <div className="space-y-2">
+                  <h4 className="font-medium">Action</h4>
+
+                  {/* <p className="text-sm">{selectedActivity.device}</p> */}
+                  {selectedActivity.device === "PetFeeder" ? (
+                    <Form className="w-full max-w-md" onSubmit={onSubmit}>
+                      <NumberInput
+                        errorMessage={() => (
+                          <ul>
+                            {errors.map((error, i) => (
+                              <li key={i}>{error}</li>
+                            ))}
+                          </ul>
+                        )}
+                        isInvalid={errors.length > 0}
+                        label="Amount"
+                        name="amount"
+                        placeholder="Enter a number"
+                        value={amount}
+                        onValueChange={setAmount}
+                        className="w-64 text-base"
+                        // inputProps removed as NumberInput does not support it
+                      />
+                      <Button
+                        color="primary"
+                        type="submit"
+                        className="mt-2 h-10 px-6 text-base"
+                      >
+                        Submit
+                      </Button>
+                      {submitted && (
+                        <div className="text-small text-default-500 mt-2">
+                          You submitted:{" "}
+                          <code>{JSON.stringify(submitted)}</code>
+                        </div>
+                      )}
+                    </Form>
+                  ) : null}
+
+                  {/* <h4 className="font-medium">Device</h4>
+                  <p className="text-sm">{selectedActivity.device}</p> */}
+                </div>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <h4 className="font-medium">Device</h4>
-                  <p className="text-sm">{selectedActivity.device}</p>
+                  {/* <h4 className="font-medium">Device</h4>
+                  <p className="text-sm">{selectedActivity.device}</p> */}
                 </div>
-                <div className="space-y-2">
+                {/* <div className="space-y-2">
                   <h4 className="font-medium">Location</h4>
                   <p className="text-sm">{selectedActivity.location}</p>
-                </div>
+                </div> */}
               </div>
 
               <div className="space-y-2">
                 <h4 className="font-medium flex items-center gap-2">
                   <Clock className="h-4 w-4" />
-                  Timestamp
+                  History
                 </h4>
+
                 <p className="text-sm">{selectedActivity.time}</p>
               </div>
 
               <div className="flex justify-end">
                 <Button
-                  variant="outline"
+                  variant="bordered"
                   onClick={() => setSelectedActivity(null)}
                 >
                   Close
