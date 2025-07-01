@@ -113,6 +113,13 @@ export function RecentActivity() {
     const device = selectedActivity?.id;
     const value = data.amount;
     const type = selectedActivity?.device;
+    const status = selectedActivity?.status;
+    if (status === "Inactive") {
+      alert(
+        "(400: Bad Request)Device Inactive unable to establish connection.Make sure devices plugged in and connected "
+      );
+      return;
+    }
 
     const response = await axios.post(`${process.env.NEXT_PUBLIC_Rotate}`, {
       device_id: device,
@@ -338,11 +345,10 @@ export function RecentActivity() {
                 </div>
               </div>
 
-              <div className="space-y-2">
+              {/* <div className="space-y-2">
                 <div className="space-y-2">
                   <h4 className="font-medium">Action</h4>
 
-                  {/* <p className="text-sm">{selectedActivity.device}</p> */}
                   {selectedActivity.device === "PetFeeder" ? (
                     <Form className="w-full max-w-md" onSubmit={onSubmit}>
                       <NumberInput
@@ -362,6 +368,7 @@ export function RecentActivity() {
                         className="w-64 text-base"
                         // inputProps removed as NumberInput does not support it
                       />
+
                       <Button
                         color="primary"
                         type="submit"
@@ -370,52 +377,79 @@ export function RecentActivity() {
                         Submit
                       </Button>
                       {submitted && (
-                        <div className="text-small text-default-500 mt-2">
-                          {/* You submitted:{" "} */}
-                          {/* <code>
-                            {JSON.stringify({
-                              devid: selectedActivity.id,
-                              amount: submitted?.amount,
-                            })}
-                          </code> */}
-                        </div>
+                        <div className="text-small text-default-500 mt-2"></div>
                       )}
                     </Form>
                   ) : null}
-
-                  {/* <h4 className="font-medium">Device</h4>
-                  <p className="text-sm">{selectedActivity.device}</p> */}
                 </div>
-              </div>
+                
+              </div> */}
 
               <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  {/* <h4 className="font-medium">Device</h4>
-                  <p className="text-sm">{selectedActivity.device}</p> */}
+                <div className="col-span-2 space-y-2">
+                  <h4 className="font-medium">Action</h4>
+
+                  {selectedActivity.device === "PetFeeder" && (
+                    <Form className="w-full max-w-full" onSubmit={onSubmit}>
+                      <NumberInput
+                        errorMessage={() => (
+                          <ul>
+                            {errors.map((error, i) => (
+                              <li key={i}>{error}</li>
+                            ))}
+                          </ul>
+                        )}
+                        isInvalid={errors.length > 0}
+                        label="Amount"
+                        name="amount"
+                        placeholder="Enter a number"
+                        value={amount}
+                        onValueChange={setAmount}
+                        className="w-64 text-base"
+                      />
+
+                      <div className="w-full flex justify-end gap-2 mt-6">
+                        <Button
+                          color="primary"
+                          type="submit"
+                          className="h-10 px-6 text-base"
+                        >
+                          Submit
+                        </Button>
+                        <Button
+                          variant="bordered"
+                          type="button"
+                          onClick={() => setSelectedActivity(null)}
+                        >
+                          Close
+                        </Button>
+                      </div>
+
+                      {submitted && (
+                        <div className="text-small text-default-500 mt-2"></div>
+                      )}
+                    </Form>
+                  )}
                 </div>
-                {/* <div className="space-y-2">
-                  <h4 className="font-medium">Location</h4>
-                  <p className="text-sm">{selectedActivity.location}</p>
-                </div> */}
               </div>
 
-              <div className="space-y-2">
+              {/* <div className="space-y-2">
                 <h4 className="font-medium flex items-center gap-2">
                   <Clock className="h-4 w-4" />
                   History
                 </h4>
 
                 <p className="text-sm">{selectedActivity.time}</p>
-              </div>
+              </div> */}
 
-              <div className="flex justify-end">
+              {/* <div className="flex justify-end">
                 <Button
                   variant="bordered"
                   onClick={() => setSelectedActivity(null)}
                 >
                   Close
                 </Button>
-              </div>
+              </div> */}
             </div>
           )}
         </DialogContent>
