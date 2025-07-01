@@ -1,5 +1,15 @@
 "use client";
 import { Button, Form, NumberInput } from "@heroui/react";
+import {
+  Modal,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  useDisclosure,
+  Divider,
+} from "@heroui/react";
+
 import { useEffect, useState } from "react";
 import {
   Card,
@@ -17,7 +27,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 
-import { Clock, Activity } from "lucide-react";
+import { Clock, Activity, Plus } from "lucide-react";
 import axios from "axios";
 import { stat } from "fs";
 import React from "react";
@@ -92,7 +102,7 @@ const recentActivity = [
 
 export function RecentActivity() {
   const [username, setUsername] = React.useState<string | string>("");
-
+  const { isOpen, onOpen, onOpenChange } = useDisclosure();
   let jsonformat = [];
   const [selectedActivity, setSelectedActivity] = useState<
     (typeof recentActivity)[0] | null
@@ -202,13 +212,110 @@ export function RecentActivity() {
     return () => clearInterval(interval);
   }, []);
   return (
+    // <div className="w-full flex justify-end gap-2 mt-6">
+    //                   <Button
+    //                     color="primary"
+    //                     type="submit"
+    //                     className="h-10 px-6 text-base"
+    //                   >
+    //                     Submit
+    //                   </Button>
+    //                   <Button
+    //                     variant="bordered"
+    //                     type="button"
+    //                     onClick={() => setSelectedActivity(null)}
+    //                   >
+    //                     Close
+    //                   </Button>
+    //                 </div>
     <>
+      <br />
       <Card>
         <CardHeader>
           <CardTitle>Device Management</CardTitle>
           <CardDescription>
             all of your devices will be shown here
           </CardDescription>
+          <div className="w-full">
+            <div className="flex">
+              <div className="ml-auto">
+                <Button onPress={onOpen}>
+                  <Plus />
+                  New
+                </Button>
+                <Modal
+                  backdrop="opaque"
+                  isOpen={isOpen}
+                  motionProps={{
+                    variants: {
+                      enter: {
+                        y: 0,
+                        opacity: 1,
+                        transition: {
+                          duration: 0.3,
+                          ease: "easeOut",
+                        },
+                      },
+                      exit: {
+                        y: -20,
+                        opacity: 0,
+                        transition: {
+                          duration: 0.2,
+                          ease: "easeIn",
+                        },
+                      },
+                    },
+                  }}
+                  onOpenChange={onOpenChange}
+                >
+                  <ModalContent>
+                    {(onClose) => (
+                      <>
+                        <ModalHeader className="flex flex-col gap-1">
+                          New Devices
+                        </ModalHeader>
+                        <ModalBody>
+                          <p>
+                            Lorem ipsum dolor sit amet, consectetur adipiscing
+                            elit. Nullam pulvinar risus non risus hendrerit
+                            venenatis. Pellentesque sit amet hendrerit risus,
+                            sed porttitor quam.
+                          </p>
+                          <p>
+                            Lorem ipsum dolor sit amet, consectetur adipiscing
+                            elit. Nullam pulvinar risus non risus hendrerit
+                            venenatis. Pellentesque sit amet hendrerit risus,
+                            sed porttitor quam.
+                          </p>
+                          <p>
+                            Magna exercitation reprehenderit magna aute tempor
+                            cupidatat consequat elit dolor adipisicing. Mollit
+                            dolor eiusmod sunt ex incididunt cillum quis. Velit
+                            duis sit officia eiusmod Lorem aliqua enim laboris
+                            do dolor eiusmod. Et mollit incididunt nisi
+                            consectetur esse laborum eiusmod pariatur proident
+                            Lorem eiusmod et. Culpa deserunt nostrud ad veniam.
+                          </p>
+                        </ModalBody>
+                        <ModalFooter>
+                          <Button
+                            color="danger"
+                            variant="light"
+                            onPress={onClose}
+                          >
+                            Close
+                          </Button>
+                          <Button color="primary" onPress={onClose}>
+                            Action
+                          </Button>
+                        </ModalFooter>
+                      </>
+                    )}
+                  </ModalContent>
+                </Modal>
+              </div>
+            </div>
+          </div>
         </CardHeader>
         <CardContent>
           <div className="grid gap-4">

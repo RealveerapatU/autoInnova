@@ -18,7 +18,7 @@ export default function DashboardPage() {
             <div className="md:col-span-2">
               <RecentActivity />
             </div>
-            <div className="space-y-4">
+            {/* <div className="space-y-4">
               <div className="rounded-xl bg-muted/50 p-4">
                 <h3 className="font-semibold mb-2">Quick Actions</h3>
                 <div className="space-y-2">
@@ -33,7 +33,7 @@ export default function DashboardPage() {
                   </button>
                 </div>
               </div>
-            </div>
+            </div> */}
           </div>
         </div>
       </SidebarInset>
