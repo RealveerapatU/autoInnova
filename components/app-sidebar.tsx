@@ -26,44 +26,44 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 const items = [
   {
     title: "Dashboard",
-    url: "/Dashboard",
+    url: "/dashboard",
     icon: Home,
   },
   {
-    title: "Projects",
-    url: "/",
+    title: "Schedule",
+    url: "/dashboard/schedule",
     icon: FolderOpen,
   },
   {
-    title: "Analytics",
+    title: "History",
     url: "/",
     icon: BarChart3,
   },
-  {
-    title: "Team",
-    url: "/",
-    icon: Users,
-  },
-  {
-    title: "Calendar",
-    url: "/",
-    icon: Calendar,
-  },
-  {
-    title: "Search",
-    url: "/",
-    icon: Search,
-  },
-  {
-    title: "Notifications",
-    url: "/",
-    icon: Bell,
-  },
-  {
-    title: "Settings",
-    url: "/",
-    icon: Settings,
-  },
+  // {
+  //   title: "Team",
+  //   url: "/",
+  //   icon: Users,
+  // },
+  // {
+  //   title: "Calendar",
+  //   url: "/",
+  //   icon: Calendar,
+  // },
+  // {
+  //   title: "Search",
+  //   url: "/",
+  //   icon: Search,
+  // },
+  // {
+  //   title: "Notifications",
+  //   url: "/",
+  //   icon: Bell,
+  // },
+  // {
+  //   title: "Settings",
+  //   url: "/",
+  //   icon: Settings,
+  // },
 ];
 
 export function AppSidebar() {

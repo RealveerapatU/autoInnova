@@ -179,6 +179,7 @@ export function RecentActivity() {
 
         time: `${scheduleHour}:${scheduleMinute}`,
         amount: scheduleAmount.toString(),
+        uid: username,
       };
       const response = await axios.post(
         `${process.env.NEXT_PUBLIC_ADD_SCHEDULE}`,
