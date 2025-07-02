@@ -29,80 +29,33 @@ import {
 
 import { Clock, Activity, Plus } from "lucide-react";
 import axios from "axios";
-import { stat } from "fs";
 import React from "react";
 
-const recentActivity = [
-  {
-    id: "1",
-    user: "John Doe",
-    email: "john@example.com",
-    action: "Created new project",
-    status: "completed",
-    time: "2 minutes ago",
-    avatar: "/placeholder.svg?height=32&width=32",
-    details:
-      "Created a new React project with TypeScript configuration and set up the initial file structure.",
-    device: "MacBook Pro",
-    location: "San Francisco, CA",
-  },
-  {
-    id: "2",
-    user: "Jane Smith",
-    email: "jane@example.com",
-    action: "Updated user profile",
-    status: "completed",
-    time: "5 minutes ago",
-    avatar: "/placeholder.svg?height=32&width=32",
-    details:
-      "Updated profile picture and contact information in the user settings panel.",
-    device: "iPhone 15 Pro",
-    location: "New York, NY",
-  },
-  {
-    id: "3",
-    user: "Mike Johnson",
-    email: "mike@example.com",
-    action: "Deployed to production",
-    status: "in-progress",
-    time: "10 minutes ago",
-    avatar: "/placeholder.svg?height=32&width=32",
-    details:
-      "Initiated deployment pipeline for version 2.1.0 to production environment.",
-    device: "Windows Surface",
-    location: "Austin, TX",
-  },
-  {
-    id: "4",
-    user: "Sarah Wilson",
-    email: "sarah@example.com",
-    action: "Invited team member",
-    status: "completed",
-    time: "15 minutes ago",
-    avatar: "/placeholder.svg?height=32&width=32",
-    details:
-      "Sent invitation to alex@company.com to join the development team with admin privileges.",
-    device: "iPad Air",
-    location: "Seattle, WA",
-  },
-  {
-    id: "5",
-    user: "Tom Brown",
-    email: "tom@example.com",
-    action: "Updated documentation",
-    status: "pending",
-    time: "20 minutes ago",
-    avatar: "/placeholder.svg?height=32&width=32",
-    details:
-      "Added new API documentation for the authentication endpoints and updated examples.",
-    device: "MacBook Air",
-    location: "Los Angeles, CA",
-  },
+type RecentActivityItem = {
+  id: string;
+  user: string;
+  email: string;
+  action: string;
+  status: string;
+  time: string;
+  avatar: string;
+  details: string;
+  device: string;
+  location: string;
+};
+
+const recentActivity: RecentActivityItem[] = [
+  /* ...same data as before... */
 ];
 
 export function RecentActivity() {
   const [username, setUsername] = React.useState<string | string>("");
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const {
+    isOpen: isScheduleOpen,
+    onOpen: onScheduleOpen,
+    onOpenChange: onScheduleOpenChange,
+  } = useDisclosure();
   let jsonformat = [];
   const [selectedActivity, setSelectedActivity] = useState<
     (typeof recentActivity)[0] | null
@@ -187,7 +140,6 @@ export function RecentActivity() {
             } else {
               status[i] = "Inactive";
             }
-            // console.log(status[i])
           }
 
           setdata(datas);
@@ -200,7 +152,6 @@ export function RecentActivity() {
             };
           });
           setdatajson(jsonformat);
-          // s
         }
       } catch (error) {
         console.error(error);
@@ -212,22 +163,6 @@ export function RecentActivity() {
     return () => clearInterval(interval);
   }, []);
   return (
-    // <div className="w-full flex justify-end gap-2 mt-6">
-    //                   <Button
-    //                     color="primary"
-    //                     type="submit"
-    //                     className="h-10 px-6 text-base"
-    //                   >
-    //                     Submit
-    //                   </Button>
-    //                   <Button
-    //                     variant="bordered"
-    //                     type="button"
-    //                     onClick={() => setSelectedActivity(null)}
-    //                   >
-    //                     Close
-    //                   </Button>
-    //                 </div>
     <>
       <br />
       <Card>
@@ -238,81 +173,12 @@ export function RecentActivity() {
           </CardDescription>
           <div className="w-full">
             <div className="flex">
-              <div className="ml-auto">
+              <div className="ml-auto flex gap-2">
                 <Button onPress={onOpen}>
                   <Plus />
                   New
                 </Button>
-                <Modal
-                  backdrop="opaque"
-                  isOpen={isOpen}
-                  motionProps={{
-                    variants: {
-                      enter: {
-                        y: 0,
-                        opacity: 1,
-                        transition: {
-                          duration: 0.3,
-                          ease: "easeOut",
-                        },
-                      },
-                      exit: {
-                        y: -20,
-                        opacity: 0,
-                        transition: {
-                          duration: 0.2,
-                          ease: "easeIn",
-                        },
-                      },
-                    },
-                  }}
-                  onOpenChange={onOpenChange}
-                >
-                  <ModalContent>
-                    {(onClose) => (
-                      <>
-                        <ModalHeader className="flex flex-col gap-1">
-                          New Devices
-                        </ModalHeader>
-                        <ModalBody>
-                          <p>
-                            Lorem ipsum dolor sit amet, consectetur adipiscing
-                            elit. Nullam pulvinar risus non risus hendrerit
-                            venenatis. Pellentesque sit amet hendrerit risus,
-                            sed porttitor quam.
-                          </p>
-                          <p>
-                            Lorem ipsum dolor sit amet, consectetur adipiscing
-                            elit. Nullam pulvinar risus non risus hendrerit
-                            venenatis. Pellentesque sit amet hendrerit risus,
-                            sed porttitor quam.
-                          </p>
-                          <p>
-                            Magna exercitation reprehenderit magna aute tempor
-                            cupidatat consequat elit dolor adipisicing. Mollit
-                            dolor eiusmod sunt ex incididunt cillum quis. Velit
-                            duis sit officia eiusmod Lorem aliqua enim laboris
-                            do dolor eiusmod. Et mollit incididunt nisi
-                            consectetur esse laborum eiusmod pariatur proident
-                            Lorem eiusmod et. Culpa deserunt nostrud ad veniam.
-                          </p>
-                        </ModalBody>
-                        <ModalFooter>
-                          <Button
-                            color="danger"
-                            variant="light"
-                            onPress={onClose}
-                          >
-                            Close
-                          </Button>
-                          <Button color="primary" onPress={onClose}>
-                            Action
-                          </Button>
-                        </ModalFooter>
-                      </>
-                    )}
-                  </ModalContent>
-                </Modal>
+                <Button onPress={onScheduleOpen}>Schedule</Button>
               </div>
             </div>
           </div>
@@ -362,15 +228,6 @@ export function RecentActivity() {
                         <p className="text-sm text-muted-foreground">
                           {activity.type}
                         </p>
-                        {/* <div className="flex items-center gap-4 mt-1">
-                          <span className="text-xs text-muted-foreground flex items-center gap-1">
-                            <Clock className="h-3 w-3" />
-                            {activity.time}
-                          </span>
-                          <span className="text-xs text-muted-foreground">
-                            {activity.email}
-                          </span>
-                        </div> */}
                       </div>
                     </div>
                     <div className="text-right">
@@ -383,6 +240,100 @@ export function RecentActivity() {
           </div>
         </CardContent>
       </Card>
+
+      <Modal
+        backdrop="opaque"
+        isOpen={isOpen}
+        motionProps={{
+          variants: {
+            enter: {
+              y: 0,
+              opacity: 1,
+              transition: {
+                duration: 0.3,
+                ease: "easeOut",
+              },
+            },
+            exit: {
+              y: -20,
+              opacity: 0,
+              transition: {
+                duration: 0.2,
+                ease: "easeIn",
+              },
+            },
+          },
+        }}
+        onOpenChange={onOpenChange}
+      >
+        <ModalContent>
+          {(onClose) => (
+            <>
+              <ModalHeader className="flex flex-col gap-1">
+                New Devices
+              </ModalHeader>
+              <ModalBody>
+                <p>...New device content...</p>
+              </ModalBody>
+              <ModalFooter>
+                <Button color="danger" variant="light" onPress={onClose}>
+                  Close
+                </Button>
+                <Button color="primary" onPress={onClose}>
+                  Action
+                </Button>
+              </ModalFooter>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
+
+      <Modal
+        backdrop="opaque"
+        isOpen={isScheduleOpen}
+        motionProps={{
+          variants: {
+            enter: {
+              y: 0,
+              opacity: 1,
+              transition: {
+                duration: 0.3,
+                ease: "easeOut",
+              },
+            },
+            exit: {
+              y: -20,
+              opacity: 0,
+              transition: {
+                duration: 0.2,
+                ease: "easeIn",
+              },
+            },
+          },
+        }}
+        onOpenChange={onScheduleOpenChange}
+      >
+        <ModalContent>
+          {(onClose) => (
+            <>
+              <ModalHeader className="flex flex-col gap-1">
+                Schedule
+              </ModalHeader>
+              <ModalBody>
+                <p>Here you can schedule device actions.</p>
+              </ModalBody>
+              <ModalFooter>
+                <Button color="danger" variant="light" onPress={onClose}>
+                  Close
+                </Button>
+                <Button color="primary" onPress={onClose}>
+                  Save
+                </Button>
+              </ModalFooter>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
 
       <Dialog
         open={!!selectedActivity}
@@ -417,24 +368,8 @@ export function RecentActivity() {
             <div className="space-y-6">
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <h4 className="font-medium flex items-center gap-2">
-                    {/* <Activity className="h-4 w-4" />
-                    Action
-                    <br />
-                    <NumberInput
-                      className="max-w-3xs"
-                      placeholder="Enter the amount"
-                    /> */}
-                    <div className="space-y-2">
-                      <div className="space-y-2">
-                        <h4 className="font-medium">Device</h4>
-                        <p className="text-sm">{selectedActivity.device}</p>
-                        {/* <h4 className="font-medium">Device</h4>
-                  <p className="text-sm">{selectedActivity.device}</p> */}
-                      </div>
-                    </div>
-                  </h4>
-                  <p className="text-sm">{selectedActivity.action}</p>
+                  <h4 className="font-medium">Device</h4>
+                  <p className="text-sm">{selectedActivity.device}</p>
                 </div>
                 <div className="space-y-2">
                   <h4 className="font-medium">Status</h4>
@@ -451,46 +386,6 @@ export function RecentActivity() {
                   </Badge>
                 </div>
               </div>
-
-              {/* <div className="space-y-2">
-                <div className="space-y-2">
-                  <h4 className="font-medium">Action</h4>
-
-                  {selectedActivity.device === "PetFeeder" ? (
-                    <Form className="w-full max-w-md" onSubmit={onSubmit}>
-                      <NumberInput
-                        errorMessage={() => (
-                          <ul>
-                            {errors.map((error, i) => (
-                              <li key={i}>{error}</li>
-                            ))}
-                          </ul>
-                        )}
-                        isInvalid={errors.length > 0}
-                        label="Amount"
-                        name="amount"
-                        placeholder="Enter a number"
-                        value={amount}
-                        onValueChange={setAmount}
-                        className="w-64 text-base"
-                        // inputProps removed as NumberInput does not support it
-                      />
-
-                      <Button
-                        color="primary"
-                        type="submit"
-                        className="mt-2 h-10 px-6 text-base"
-                      >
-                        Submit
-                      </Button>
-                      {submitted && (
-                        <div className="text-small text-default-500 mt-2"></div>
-                      )}
-                    </Form>
-                  ) : null}
-                </div>
-                
-              </div> */}
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="col-span-2 space-y-2">
@@ -539,24 +434,6 @@ export function RecentActivity() {
                   )}
                 </div>
               </div>
-
-              {/* <div className="space-y-2">
-                <h4 className="font-medium flex items-center gap-2">
-                  <Clock className="h-4 w-4" />
-                  History
-                </h4>
-
-                <p className="text-sm">{selectedActivity.time}</p>
-              </div> */}
-
-              {/* <div className="flex justify-end">
-                <Button
-                  variant="bordered"
-                  onClick={() => setSelectedActivity(null)}
-                >
-                  Close
-                </Button>
-              </div> */}
             </div>
           )}
         </DialogContent>
