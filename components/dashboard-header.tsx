@@ -14,9 +14,7 @@ import {
 import axios from "axios";
 import { useEffect } from "react";
 
-
 export function DashboardHeader() {
-
   return (
     <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12">
       <div className="flex items-center gap-2 px-4">
@@ -25,20 +23,18 @@ export function DashboardHeader() {
         <Breadcrumb>
           <BreadcrumbList>
             <BreadcrumbItem className="hidden md:block">
-              <BreadcrumbLink href="#">
-                Building Your Application
-              </BreadcrumbLink>
+              <BreadcrumbLink href="/dashboard">Dashboard</BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator className="hidden md:block" />
             <BreadcrumbItem>
-              <BreadcrumbPage>Dashboard</BreadcrumbPage>
+              {/* <BreadcrumbPage>Dashboard</BreadcrumbPage> */}
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
       </div>
       <div className="ml-auto flex items-center gap-2 px-4">
         <div className="relative">
-          <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+          {/* <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" /> */}
           {/* <Input type="search" placeholder="Search..." className="w-[200px] pl-8 md:w-[300px]" /> */}
         </div>
         {/* <Button variant="ghost" size="icon">

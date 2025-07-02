@@ -93,16 +93,23 @@ export function RecentActivity() {
     (typeof recentActivity)[0] | null
   >(null);
   const [alldatajson, setdatajson] = useState<
-    { time: any; device: any; amount: any; types: any }[]
+    {
+      id: any;
+      device: any;
+      repeat: any;
+      date: any;
+      time: any;
+      amount: any;
+    }[]
   >([]);
   const [username, setusername] = useState<string>("");
   useEffect(() => {
     const uid = localStorage.getItem("petfeederusername");
     setusername(uid || "");
     console.log(uid);
-    const getHistory = async () => {
+    const getSchedule = async () => {
       const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_URL}/autoinnova/gettransanction`,
+        `${process.env.NEXT_PUBLIC_URL}/autoinnova/getschedule`,
         {
           lineuid: uid,
         }
@@ -110,26 +117,51 @@ export function RecentActivity() {
       if (response.status === 200) {
         const data = response.data;
         const jsonformat = data.map((item: any) => ({
-          time: item.time,
+          id: item.id,
           device: item.devices_id,
+          repeat: item.repeat_type,
+          date: item.date,
+          time: item.time,
+
           amount: item.amount,
-          types: item.types,
         }));
         setdatajson(jsonformat);
-        console.log(jsonformat);
+        // console.log(jsonformat);
       } else {
         setdatajson([]);
       }
     };
 
-    getHistory();
+    getSchedule();
+    setInterval(() => {
+      getSchedule();
+    }, 1000);
   }, [username]);
+
+  async function handleDelete(id: any): Promise<void> {
+    try {
+      const response = await axios.delete(
+        `${process.env.NEXT_PUBLIC_URL}/autoinnova/getschedule`,
+        {
+          data: {
+            scheduleid: id,
+          },
+        }
+      );
+      if (response.status === 200) {
+        alert("Delete Success");
+        return;
+      }
+    } catch (error) {
+      alert("Unable to delete");
+    }
+  }
 
   return (
     <>
       <Card>
         <CardHeader>
-          <CardTitle>Recent Activity</CardTitle>
+          <CardTitle>Schedule</CardTitle>
           <CardDescription>
             Latest transactions from your devices
           </CardDescription>
@@ -149,18 +181,29 @@ export function RecentActivity() {
                   <CardContent className="p-4">
                     <div className="flex items-center justify-between">
                       <div>
-                        <div className="font-medium">Device: {activity.device}</div>
+                        <div className="font-medium">
+                          Device: {activity.device}
+                        </div>
                         <div className="text-sm text-muted-foreground">
-                          Type: {activity.types}
+                          Repeat: {activity.repeat}
+                        </div>
+                        <div className="text-sm text-muted-foreground">
+                          Date: {activity.date}
+                        </div>
+                        <div className="text-sm text-muted-foreground">
+                          Time: {activity.time}
                         </div>
                         <div className="text-sm text-muted-foreground">
                           Amount: {activity.amount}
                         </div>
                       </div>
-                      <div className="text-right">
-                        <Clock className="h-4 w-4 text-muted-foreground inline mr-1" />
-                        <span className="text-xs">{activity.time}</span>
-                      </div>
+                      <Button
+                        variant="destructive"
+                        size="sm"
+                        onClick={() => handleDelete(activity.id)}
+                      >
+                        Delete
+                      </Button>
                     </div>
                   </CardContent>
                 </Card>

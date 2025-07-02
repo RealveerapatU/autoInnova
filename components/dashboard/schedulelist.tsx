@@ -99,7 +99,7 @@ export function RecentActivity() {
   useEffect(() => {
     const uid = localStorage.getItem("petfeederusername");
     setusername(uid || "");
-    console.log(uid);
+
     const getHistory = async () => {
       const response = await axios.post(
         `${process.env.NEXT_PUBLIC_URL}/autoinnova/gettransanction`,
@@ -116,7 +116,7 @@ export function RecentActivity() {
           types: item.types,
         }));
         setdatajson(jsonformat);
-        console.log(jsonformat);
+        // console.log(jsonformat);
       } else {
         setdatajson([]);
       }
@@ -149,7 +149,9 @@ export function RecentActivity() {
                   <CardContent className="p-4">
                     <div className="flex items-center justify-between">
                       <div>
-                        <div className="font-medium">Device: {activity.device}</div>
+                        <div className="font-medium">
+                          Device: {activity.device}
+                        </div>
                         <div className="text-sm text-muted-foreground">
                           Type: {activity.types}
                         </div>

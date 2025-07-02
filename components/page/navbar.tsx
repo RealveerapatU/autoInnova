@@ -17,6 +17,7 @@ import {
 } from "@heroui/react";
 import React, { useEffect } from "react";
 import { useRouter } from "next/navigation";
+import axios from "axios";
 
 export const AcmeLogo = () => {
   return (
@@ -86,12 +87,12 @@ export default function App() {
     const getprofile = localStorage.getItem("petfeederuserprofile");
     if (getusername === null || getusername === undefined) {
       setusername("undefined");
-
+      setuserprofile("");
       return;
     }
     setusername(getusername);
     setuserprofile(getprofile || "");
-  }, [username]);
+  }, []);
 
   const menuItems = [
     "Profile",

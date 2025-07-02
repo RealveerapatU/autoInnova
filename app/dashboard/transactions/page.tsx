@@ -1,11 +1,21 @@
-import React from "react";
+"use client";
+import React, { useEffect } from "react";
 import { RecentActivity } from "@/components/dashboard/schedulelist";
 import { AppSidebar } from "@/components/app-sidebar";
 import { DashboardHeader } from "@/components/dashboard/header";
 import { StatsCards } from "@/components/dashboard/stats";
-
+import { validateid } from "@/components/page/navbar";
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 export default function page() {
+  useEffect(() => {
+    const validate = async () => {
+      await validateid();
+    };
+    validate();
+    setInterval(() => {
+      validate;
+    }, 1000);
+  }, []);
   return (
     <SidebarProvider>
       <AppSidebar />
