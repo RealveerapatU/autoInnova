@@ -167,7 +167,16 @@ export function RecentActivity() {
       const payload = {
         devices_id: selectedDeviceId,
         repeat_type: repeatType,
-        date: repeatType === "once" ? scheduleDate?.toString() : null,
+        date:
+          repeatType === "once" && scheduleDate
+            ? `${scheduleDate.year}-${scheduleDate.month
+                .toString()
+                .padStart(
+                  2,
+                  "0"
+                )}-${scheduleDate.day.toString().padStart(2, "0")}`
+            : null,
+
         time: `${scheduleHour}:${scheduleMinute}`,
         amount: scheduleAmount.toString(),
       };
