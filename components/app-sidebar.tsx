@@ -36,7 +36,7 @@ const items = [
   },
   {
     title: "History",
-    url: "/",
+    url: "/dashboard/transactions",
     icon: BarChart3,
   },
   // {
