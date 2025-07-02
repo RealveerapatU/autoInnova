@@ -1,4 +1,8 @@
 "use client";
+import { Select, SelectItem } from "@heroui/react";
+
+import { Time } from "@internationalized/date";
+import { TimeInput } from "@heroui/react";
 import { Button, Form, NumberInput } from "@heroui/react";
 import { Autocomplete, AutocompleteItem } from "@heroui/react";
 import { DatePicker } from "@heroui/date-picker";
@@ -16,62 +20,7 @@ import {
   useDisclosure,
   Divider,
 } from "@heroui/react";
-export const animals = [
-  {
-    label: "Cat",
-    key: "cat",
-    description: "The second most popular pet in the world",
-  },
-  {
-    label: "Dog",
-    key: "dog",
-    description: "The most popular pet in the world",
-  },
-  {
-    label: "Elephant",
-    key: "elephant",
-    description: "The largest land animal",
-  },
-  { label: "Lion", key: "lion", description: "The king of the jungle" },
-  { label: "Tiger", key: "tiger", description: "The largest cat species" },
-  { label: "Giraffe", key: "giraffe", description: "The tallest land animal" },
-  {
-    label: "Dolphin",
-    key: "dolphin",
-    description: "A widely distributed and diverse group of aquatic mammals",
-  },
-  {
-    label: "Penguin",
-    key: "penguin",
-    description: "A group of aquatic flightless birds",
-  },
-  {
-    label: "Zebra",
-    key: "zebra",
-    description: "A several species of African equids",
-  },
-  {
-    label: "Shark",
-    key: "shark",
-    description:
-      "A group of elasmobranch fish characterized by a cartilaginous skeleton",
-  },
-  {
-    label: "Whale",
-    key: "whale",
-    description: "Diverse group of fully aquatic placental marine mammals",
-  },
-  {
-    label: "Otter",
-    key: "otter",
-    description: "A carnivorous mammal in the subfamily Lutrinae",
-  },
-  {
-    label: "Crocodile",
-    key: "crocodile",
-    description: "A large semiaquatic reptile",
-  },
-];
+
 import { useEffect, useState } from "react";
 import {
   Card,
@@ -120,6 +69,22 @@ export function RecentActivity() {
   const [submittedusername, setSubmittedusername] = React.useState<{
     [k: string]: FormDataEntryValue;
   } | null>(null);
+
+  const [selectedDeviceId, setSelectedDeviceId] = useState<string | null>(null);
+  const [repeatType, setRepeatType] = useState<"once" | "daily">("once");
+  const [scheduleDate, setScheduleDate] = useState<CalendarDate | null>(null);
+  const [scheduleTime, setScheduleTime] = useState<Time | null>(null);
+  const [scheduleHour, setScheduleHour] = useState<string>("12");
+  const [scheduleMinute, setScheduleMinute] = useState<string>("00");
+
+  const hours = Array.from({ length: 24 }, (_, i) =>
+    i.toString().padStart(2, "0")
+  );
+  const minutes = Array.from({ length: 12 }, (_, i) =>
+    (i * 5).toString().padStart(2, "0")
+  );
+
+  const [scheduleAmount, setScheduleAmount] = useState<number>(1);
 
   const onSubmitusername = async (e: any) => {
     let repeatdevices = false;
@@ -185,6 +150,37 @@ export function RecentActivity() {
   } | null>(null);
   const [amount, setAmount] = React.useState<number | undefined>(undefined);
   const errors: string[] = [];
+
+  const onScheduleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    // if (
+    //   !selectedDeviceId ||
+    //   !scheduleTime ||
+    //   !scheduleAmount ||
+    //   !repeatType ||
+    //   (repeatType === "once" && !scheduleDate)
+    // ) {
+    //   alert("Please fill in all required fields.");
+    //   return;
+    // }
+    try {
+      const payload = {
+        devices_id: selectedDeviceId,
+        repeat_type: repeatType,
+        date: repeatType === "once" ? scheduleDate?.toString() : null,
+        time: `${scheduleHour}:${scheduleMinute}`,
+        amount: scheduleAmount.toString(),
+      };
+      const response = await axios.post(
+        `${process.env.NEXT_PUBLIC_ADD_SCHEDULE}`,
+        payload
+      );
+      if (response.status === 200) alert("Schedule added successfully");
+    } catch (error) {
+      // alert("Error adding schedule");
+      console.log(error);
+    }
+  };
 
   const onSubmit = async (e: any) => {
     e.preventDefault();
@@ -295,8 +291,7 @@ export function RecentActivity() {
                   New
                 </Button>
                 <Button onPress={onScheduleOpen}>
-                  <Clock />
-                  Schedule
+                  <Clock /> Schedule
                 </Button>
               </div>
             </div>
@@ -429,69 +424,114 @@ export function RecentActivity() {
       <Modal
         backdrop="opaque"
         isOpen={isScheduleOpen}
-        motionProps={{
-          variants: {
-            enter: {
-              y: 0,
-              opacity: 1,
-              transition: {
-                duration: 0.3,
-                ease: "easeOut",
-              },
-            },
-            exit: {
-              y: -20,
-              opacity: 0,
-              transition: {
-                duration: 0.2,
-                ease: "easeIn",
-              },
-            },
-          },
-        }}
         onOpenChange={onScheduleOpenChange}
+        shouldBlockScroll={true}
+        isDismissable={false}
       >
         <ModalContent>
           {(onClose) => (
-            <>
-              <Form className="w-full space-y-4" onSubmit={onSubmitusername}>
-                <ModalHeader className="flex flex-col gap-1">
-                  Scheculing
-                </ModalHeader>
-                <ModalBody>
-                  <Input
-                    isRequired
-                    label="Device Name"
-                    labelPlacement="outside"
-                    name="deviceName"
-                    placeholder="Enter device name"
-                    type="text"
-                    className="mb-3"
+            <Form className="w-full space-y-4" onSubmit={onScheduleSubmit}>
+              <ModalHeader className="flex flex-col gap-1">
+                Scheduling
+              </ModalHeader>
+              <ModalBody>
+                <Select
+                  label="Select Device"
+                  selectedKeys={selectedDeviceId ? [selectedDeviceId] : []}
+                  onSelectionChange={(keys) =>
+                    setSelectedDeviceId(Array.from(keys)[0] as string)
+                  }
+                >
+                  {alldatajson.map((item) => (
+                    <SelectItem key={item.deviceid}>{item.deviceid}</SelectItem>
+                  ))}
+                </Select>
+
+                <Select
+                  label="Repeat Type"
+                  selectedKeys={[repeatType]}
+                  onSelectionChange={(keys) => {
+                    const selected = Array.from(keys)[0] as "once" | "daily";
+                    setRepeatType(selected);
+                    if (selected === "daily") setScheduleDate(null);
+                  }}
+                  className="mt-4"
+                >
+                  <SelectItem key="once">Once</SelectItem>
+                  <SelectItem key="daily">Daily</SelectItem>
+                </Select>
+
+                {repeatType === "once" && (
+                  <DatePicker
+                    label="Date"
+                    value={scheduleDate ?? undefined}
+                    onChange={setScheduleDate}
+                    className="mt-4"
                   />
-                  <p>Select Date</p>
-                  <div className="flex w-full flex-wrap md:flex-nowrap gap-4">
-                    <DateInput
-                      className="max-w-sm"
-                      label={"Birth date"}
-                      placeholderValue={new CalendarDate(1995, 11, 6)}
-                    />
-                  </div>
-                </ModalBody>
-                <ModalFooter className="flex justify-end gap-3 w-full">
-                  <Button
-                    color="danger"
-                    variant="light"
-                    onPress={onClose}
-                    type="button"
+                )}
+                <div className="flex gap-4 mt-4">
+                  <Select
+                    label="Hour"
+                    selectedKeys={
+                      scheduleHour ? new Set([scheduleHour]) : new Set()
+                    }
+                    onSelectionChange={(keys) => {
+                      // keys อาจเป็น Set หรือ string
+                      if (typeof keys === "string") {
+                        setScheduleHour(keys);
+                      } else if (keys instanceof Set) {
+                        setScheduleHour(String(Array.from(keys)[0]));
+                      }
+                    }}
                   >
-                    Close
-                  </Button>
-                  <Button color="primary" type="submit">
-                    Add Schedule
-                  </Button>
-                </ModalFooter>
-              </Form>
-            </>
+                    {hours.map((h) => (
+                      <SelectItem key={h}>{h}</SelectItem>
+                    ))}
+                  </Select>
+
+                  <Select
+                    label="Minute"
+                    selectedKeys={
+                      scheduleMinute ? new Set([scheduleMinute]) : new Set()
+                    }
+                    onSelectionChange={(keys) => {
+                      if (typeof keys === "string") {
+                        setScheduleMinute(keys);
+                      } else if (keys instanceof Set) {
+                        setScheduleMinute(String(Array.from(keys)[0]));
+                      }
+                    }}
+                  >
+                    {minutes.map((m) => (
+                      <SelectItem key={m}>{m}</SelectItem>
+                    ))}
+                  </Select>
+                </div>
+
+                <NumberInput
+                  label="Amount"
+                  placeholder="e.g. 1"
+                  value={scheduleAmount}
+                  onValueChange={setScheduleAmount}
+                  minValue={1}
+                  maxValue={10}
+                  className="mt-4"
+                />
+              </ModalBody>
+              <ModalFooter className="flex justify-end gap-3 w-full">
+                <Button
+                  color="danger"
+                  variant="light"
+                  onPress={onClose}
+                  type="button"
+                >
+                  Close
+                </Button>
+                <Button color="primary" type="submit">
+                  Add Schedule
+                </Button>
+              </ModalFooter>
+            </Form>
           )}
         </ModalContent>
       </Modal>
