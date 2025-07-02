@@ -1,5 +1,12 @@
 "use client";
 import { Button, Form, NumberInput } from "@heroui/react";
+import { Autocomplete, AutocompleteItem } from "@heroui/react";
+import { DatePicker } from "@heroui/date-picker";
+import { Input } from "@heroui/react";
+import { DateInput } from "@heroui/react";
+import { CalendarDate } from "@internationalized/date";
+import { DateRangePicker } from "@heroui/react";
+import { parseAbsoluteToLocal } from "@internationalized/date";
 import {
   Modal,
   ModalContent,
@@ -9,7 +16,62 @@ import {
   useDisclosure,
   Divider,
 } from "@heroui/react";
-
+export const animals = [
+  {
+    label: "Cat",
+    key: "cat",
+    description: "The second most popular pet in the world",
+  },
+  {
+    label: "Dog",
+    key: "dog",
+    description: "The most popular pet in the world",
+  },
+  {
+    label: "Elephant",
+    key: "elephant",
+    description: "The largest land animal",
+  },
+  { label: "Lion", key: "lion", description: "The king of the jungle" },
+  { label: "Tiger", key: "tiger", description: "The largest cat species" },
+  { label: "Giraffe", key: "giraffe", description: "The tallest land animal" },
+  {
+    label: "Dolphin",
+    key: "dolphin",
+    description: "A widely distributed and diverse group of aquatic mammals",
+  },
+  {
+    label: "Penguin",
+    key: "penguin",
+    description: "A group of aquatic flightless birds",
+  },
+  {
+    label: "Zebra",
+    key: "zebra",
+    description: "A several species of African equids",
+  },
+  {
+    label: "Shark",
+    key: "shark",
+    description:
+      "A group of elasmobranch fish characterized by a cartilaginous skeleton",
+  },
+  {
+    label: "Whale",
+    key: "whale",
+    description: "Diverse group of fully aquatic placental marine mammals",
+  },
+  {
+    label: "Otter",
+    key: "otter",
+    description: "A carnivorous mammal in the subfamily Lutrinae",
+  },
+  {
+    label: "Crocodile",
+    key: "crocodile",
+    description: "A large semiaquatic reptile",
+  },
+];
 import { useEffect, useState } from "react";
 import {
   Card,
@@ -49,7 +111,61 @@ const recentActivity: RecentActivityItem[] = [
 ];
 
 export function RecentActivity() {
+  let [date, setDate] = React.useState({
+    start: parseAbsoluteToLocal("2024-04-01T18:45:22Z"),
+    end: parseAbsoluteToLocal("2024-04-08T19:15:22Z"),
+  });
+
   const [username, setUsername] = React.useState<string | string>("");
+  const [submittedusername, setSubmittedusername] = React.useState<{
+    [k: string]: FormDataEntryValue;
+  } | null>(null);
+
+  const onSubmitusername = async (e: any) => {
+    let repeatdevices = false;
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    const deviceName = formData.get("deviceName");
+    try {
+      const checkownuserres = await axios.get(
+        `${process.env.NEXT_PUBLIC_URL}/autoinnova/devices/searchdeviceid`
+      );
+      if (checkownuserres.status === 200) {
+        const data = checkownuserres.data;
+        const devid = data.map((item: any) => item.devices_id);
+        for (let i = 0; i < devid.length; i++) {
+          if (devid[i] === deviceName) {
+            repeatdevices = true;
+            break;
+          }
+        }
+        if (repeatdevices) {
+          alert("Devices has already taken");
+          return;
+        }
+        const response = await axios.post(
+          `${process.env.NEXT_PUBLIC_URL}/autoinnova/adddevices`,
+          {
+            uid: username,
+            deviceid: deviceName,
+            type: "PetFeeder",
+          }
+        );
+        if (response.status === 200) {
+          alert("Success");
+        }
+      }
+
+      // const response = await axios.get(
+      //   `${process.env.NEXT_PUBLIC_PING_URL}${deviceName}`
+      // );
+      // if (response.data?.online) {
+      //   alert("status:200 Connection Established");
+      // }
+    } catch (error) {
+      alert("500 Internal Server Error");
+    }
+  };
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const {
     isOpen: isScheduleOpen,
@@ -178,7 +294,10 @@ export function RecentActivity() {
                   <Plus />
                   New
                 </Button>
-                <Button onPress={onScheduleOpen}>Schedule</Button>
+                <Button onPress={onScheduleOpen}>
+                  <Clock />
+                  Schedule
+                </Button>
               </div>
             </div>
           </div>
@@ -269,20 +388,39 @@ export function RecentActivity() {
         <ModalContent>
           {(onClose) => (
             <>
-              <ModalHeader className="flex flex-col gap-1">
-                New Devices
-              </ModalHeader>
-              <ModalBody>
+              <Form className="w-full space-y-4" onSubmit={onSubmitusername}>
+                <ModalHeader className="flex flex-col gap-1">
+                  Add New Device
+                </ModalHeader>
+                <ModalBody>
+                  <Input
+                    isRequired
+                    label="Device Name"
+                    labelPlacement="outside"
+                    name="deviceName"
+                    placeholder="Enter device name"
+                    type="text"
+                    className="mb-3"
+                  />
+                </ModalBody>
+                <ModalFooter className="flex justify-end gap-3 w-full">
+                  <Button
+                    color="danger"
+                    variant="light"
+                    onPress={onClose}
+                    type="button"
+                  >
+                    Close
+                  </Button>
+                  <Button color="primary" type="submit">
+                    Add Device
+                  </Button>
+                </ModalFooter>
+              </Form>
+
+              {/* <ModalBody>
                 <p>...New device content...</p>
-              </ModalBody>
-              <ModalFooter>
-                <Button color="danger" variant="light" onPress={onClose}>
-                  Close
-                </Button>
-                <Button color="primary" onPress={onClose}>
-                  Action
-                </Button>
-              </ModalFooter>
+              </ModalBody> */}
             </>
           )}
         </ModalContent>
@@ -316,20 +454,43 @@ export function RecentActivity() {
         <ModalContent>
           {(onClose) => (
             <>
-              <ModalHeader className="flex flex-col gap-1">
-                Schedule
-              </ModalHeader>
-              <ModalBody>
-                <p>Here you can schedule device actions.</p>
-              </ModalBody>
-              <ModalFooter>
-                <Button color="danger" variant="light" onPress={onClose}>
-                  Close
-                </Button>
-                <Button color="primary" onPress={onClose}>
-                  Save
-                </Button>
-              </ModalFooter>
+              <Form className="w-full space-y-4" onSubmit={onSubmitusername}>
+                <ModalHeader className="flex flex-col gap-1">
+                  Scheculing
+                </ModalHeader>
+                <ModalBody>
+                  <Input
+                    isRequired
+                    label="Device Name"
+                    labelPlacement="outside"
+                    name="deviceName"
+                    placeholder="Enter device name"
+                    type="text"
+                    className="mb-3"
+                  />
+                  <p>Select Date</p>
+                  <div className="flex w-full flex-wrap md:flex-nowrap gap-4">
+                    <DateInput
+                      className="max-w-sm"
+                      label={"Birth date"}
+                      placeholderValue={new CalendarDate(1995, 11, 6)}
+                    />
+                  </div>
+                </ModalBody>
+                <ModalFooter className="flex justify-end gap-3 w-full">
+                  <Button
+                    color="danger"
+                    variant="light"
+                    onPress={onClose}
+                    type="button"
+                  >
+                    Close
+                  </Button>
+                  <Button color="primary" type="submit">
+                    Add Schedule
+                  </Button>
+                </ModalFooter>
+              </Form>
             </>
           )}
         </ModalContent>
