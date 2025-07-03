@@ -31,7 +31,10 @@ export const AcmeLogo = () => {
     </svg>
   );
 };
-
+async function logout() {
+  localStorage.setItem("logout", "1");
+  window.location.href = "/signin";
+}
 type SearchIconProps = {
   size?: number;
   strokeWidth?: number;
@@ -94,18 +97,7 @@ export default function App() {
     setuserprofile(getprofile || "");
   }, []);
 
-  const menuItems = [
-    "Profile",
-    "Dashboard",
-    "Activity",
-    "Analytics",
-    "System",
-    "Deployments",
-    "My Settings",
-    "Team Settings",
-    "Help & Feedback",
-    "Log Out",
-  ];
+  const menuItems = ["Dashboard", "shop"];
 
   return (
     <Navbar isBordered isMenuOpen={isMenuOpen} onMenuOpenChange={setIsMenuOpen}>
@@ -141,19 +133,6 @@ export default function App() {
       </NavbarContent>
 
       <NavbarContent as="div" className="items-center" justify="end">
-        {/* <Input
-          classNames={{
-            base: "max-w-full sm:max-w-[10rem] h-10",
-            mainWrapper: "h-full",
-            input: "text-small",
-            inputWrapper:
-              "h-full font-normal text-default-500 bg-default-400/20 dark:bg-default-500/20",
-          }}
-          placeholder="Type to search..."
-          size="sm"
-          startContent={<SearchIcon size={18} />}
-          type="search"
-        /> */}
         <Dropdown placement="bottom-end">
           {username === "undefined" ? (
             <>
@@ -211,7 +190,7 @@ export default function App() {
                 <DropdownItem key="help_and_feedback">
                   Help & Feedback
                 </DropdownItem> */}
-                <DropdownItem key="logout" color="danger">
+                <DropdownItem key="logout" color="danger" onClick={logout}>
                   Log Out
                 </DropdownItem>
               </>

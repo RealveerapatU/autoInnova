@@ -5,8 +5,51 @@ import { DashboardHeader } from "@/components/dashboard-header";
 import { StatsCards } from "@/components/stats-cards";
 import { RecentActivity } from "@/components/recent-activity";
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
+import axios from "axios";
+import { useState, useEffect } from "react";
 
 export default function DashboardPage() {
+  const [username, setusername] = useState<string>("");
+
+  useEffect(() => {
+    const validateuid = async () => {
+      const uid = localStorage.getItem("petfeederusername") || "";
+      setusername(uid);
+      if (!uid) {
+        alert("401 Unauthorized");
+        localStorage.setItem("logout", "1");
+        window.location.href = "/signin";
+        return;
+      }
+      try {
+        const response = await axios.post(
+          `${process.env.NEXT_PUBLIC_URL}/autoinnova/user`,
+          {
+            line_uid: uid,
+          }
+        );
+        if (response.status === 200) {
+          const data = response.data;
+          if (Array.isArray(data) && data.length === 0) {
+            alert("Unauthorized");
+            localStorage.removeItem("petfeederdisplayname");
+            localStorage.removeItem("petfeederusername");
+            localStorage.removeItem("petfeederuserprofile");
+            localStorage.setItem("logout", "1");
+            window.location.href = "/signin";
+          }
+        }
+      } catch (error) {
+        alert("500 Internal Server error");
+      }
+    };
+
+    validateuid();
+    const interval = setInterval(validateuid, 1000);
+
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <SidebarProvider>
       <AppSidebar />

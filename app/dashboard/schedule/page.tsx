@@ -15,10 +15,11 @@ export default function Page() {
     const validateuid = async () => {
       const uid = localStorage.getItem("petfeederusername") || "";
       setusername(uid);
-      if (username === null || username === undefined || username === "") {
+      if (!uid) {
         alert("401 Unauthorized");
-        window.location.href = "/signin";
         localStorage.setItem("logout", "1");
+        window.location.href = "/signin";
+        return;
       }
       try {
         const response = await axios.post(
@@ -42,10 +43,11 @@ export default function Page() {
         alert("500 Internal Server error");
       }
     };
+
     validateuid();
-    setInterval(async () => {
-      await validateuid();
-    }, 1000);
+    const interval = setInterval(validateuid, 1000);
+
+    return () => clearInterval(interval);
   }, []);
   return (
     <div>

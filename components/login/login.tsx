@@ -72,6 +72,20 @@ async function Registeruid(userid: any) {
     console.log(error);
   }
 }
+async function login() {
+  try {
+    const liffId = process.env.NEXT_PUBLIC_liffId;
+    if (!liffId) {
+      throw new Error("NEXT_PUBLIC_liffId environment variable is not set");
+    }
+    await liff.init({ liffId });
+    if (!liff.isLoggedIn()) {
+      liff.login({
+        redirectUri: process.env.NEXT_PUBLIC_redirectURL + "/signin",
+      });
+    }
+  } catch (error) {}
+}
 export default function App() {
   const [username, setUsername] = React.useState<string | string>("");
   const [profile, setprofile] = React.useState<string | string>("");
@@ -85,27 +99,28 @@ export default function App() {
           throw new Error("NEXT_PUBLIC_liffId environment variable is not set");
         }
         await liff.init({ liffId });
-        if (!liff.isLoggedIn()) {
-          liff.login({
-            redirectUri: `${process.env.NEXT_PUBLIC_redirectURL}/signin`,
-          });
-
-          return;
+        const flag = localStorage.getItem("logout");
+        if (flag === "1") {
+          liff.logout();
+          localStorage.clear();
+          window.location.reload();
         }
+        if (liff.isLoggedIn()) {
+          const profile = await liff.getProfile();
+          const userId = profile.userId;
+          const userprofile = profile.pictureUrl;
+          const displayName = profile.displayName;
 
-        const profile = await liff.getProfile();
-        const userId = profile.userId;
-        const userprofile = profile.pictureUrl;
-        const displayName = profile.displayName;
-
-        localStorage.setItem("petfeederusername", userId);
-        localStorage.setItem("petfeederuserprofile", userprofile!);
-        localStorage.setItem("petfeederdisplayname", displayName);
-        setUsername(userId);
-        setprofile(userprofile!);
-        setdisplayname(displayName);
-        await Registeruid(userId);
-        window.location.href = "/dashboard";
+          localStorage.setItem("petfeederusername", userId);
+          localStorage.setItem("petfeederuserprofile", userprofile!);
+          localStorage.setItem("petfeederdisplayname", displayName);
+          setUsername(userId);
+          setprofile(userprofile!);
+          setdisplayname(displayName);
+          await Registeruid(userId);
+          console.log("Logged in");
+          window.location.href = "/dashboard";
+        }
       } catch (err) {
         console.error("LIFF Error:", err);
       }
@@ -176,11 +191,7 @@ export default function App() {
               </button>
             </form>
             <button
-              onClick={() =>
-                liff.login({
-                  redirectUri: `${process.env.NEXT_PUBLIC_redirectURL}/signin`,
-                })
-              }
+              onClick={login}
               className="flex items-center justify-center w-full text-white bg-green-600 hover:bg-green-700 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
             >
               <img
