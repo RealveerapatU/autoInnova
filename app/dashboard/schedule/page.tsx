@@ -7,7 +7,7 @@ import { RecentActivity } from "@/components/dashboard/schedule/schedulelist";
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 import React from "react";
 
-export default function page() {
+export default function Page() {
   return (
     <div>
       <SidebarProvider>
